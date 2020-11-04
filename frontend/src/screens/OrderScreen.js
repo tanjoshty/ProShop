@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import {PayPalButton} from 'react-paypal-button-v2'
 import {Link} from 'react-router-dom'
-import { Button, Row, Col, ListGroup, Image, Card} from 'react-bootstrap'
+import { Row, Col, ListGroup, Image, Card} from 'react-bootstrap'
 import {useDispatch, useSelector} from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import {getOrderDetails, payOrder} from '../actions/orderActions'
 import {ORDER_PAY_RESET} from '../constants/orderConstants'
 
-const OrderScreen = ({match}) => {
+const OrderScreen = ({match, history}) => {
     const orderId = match.params.id
 
     const [sdkReady, setSdkReady] = useState(false)
@@ -49,10 +49,10 @@ const OrderScreen = ({match}) => {
             document.body.appendChild(script)
         }
 
-        if(!order || successPay) {
+        if(!order || successPay || order._id !== orderId) {
             dispatch({type: ORDER_PAY_RESET})
             dispatch(getOrderDetails(orderId))
-        } else if (!order.idPaid) {
+        } else if (!order.isPaid) {
             if (!window.paypal) {
                 addPayPalScript()
             } else {
@@ -149,11 +149,11 @@ const OrderScreen = ({match}) => {
                         {!order.isPaid && (
                             <ListGroup.Item>
                                 {loadingPay && <Loader />}
-                                {!sdkReady ? (<Loader />) : (
+                                {!sdkReady ? <Loader /> : (
                                     <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler} />
                                 )}
                             </ListGroup.Item>
-                        )} 
+                        )}
                     </ListGroup>
                 </Card>
             </Col>
