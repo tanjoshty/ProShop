@@ -17,36 +17,40 @@ const ProductsScreen = ({history, match}) => {
 
     const dispatch = useDispatch()
 
-    const productDetails = useSelector(state => state.productDetails)
+    const productDetails = useSelector((state) => state.productDetails)
     const { loading, error, product } = productDetails
 
-    const productReviewCreate = useSelector(state => state.productReviewCreate)
-    const { success: successProductReview, error: errorProductReview } = productReviewCreate
-
-    const userLogin = useSelector(state => state.userLogin)
+    const userLogin = useSelector((state) => state.userLogin)
     const { userInfo } = userLogin
 
-    useEffect (() => {
-        if(successProductReview) {
-            alert('Review Submitted!')
-            setRating(0)
-            setComment('')
-            dispatch({type: PRODUCT_CREATE_REVIEW_RESET})
+    const productReviewCreate = useSelector((state) => state.productReviewCreate)
+    const { success: successProductReview, loading: loadingProductReview, error: errorProductReview } = productReviewCreate
+
+
+    useEffect(() => {
+        if (successProductReview) {
+          setRating(0)
+          setComment('')
         }
-        dispatch(listProductDetails(match.params.id))
-    }, [dispatch, match, successProductReview])
-
-    const addToCartHandler = () => {
+        if (!product._id || product._id !== match.params.id) {
+          dispatch(listProductDetails(match.params.id))
+          dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
+        }
+      }, [dispatch, match, successProductReview])
+    
+      const addToCartHandler = () => {
         history.push(`/cart/${match.params.id}?qty=${qty}`)
-    }
-
-    const submitHandler = (e) => {
+      }
+    
+      const submitHandler = (e) => {
         e.preventDefault()
-        dispatch(createProductReview(match.params.id, {
+        dispatch(
+          createProductReview(match.params.id, {
             rating,
-            comment
-        }))
-    }
+            comment,
+          })
+        )
+      }
 
     return (
         <>
@@ -140,7 +144,15 @@ const ProductsScreen = ({history, match}) => {
                 ))}
                 <ListGroup.Item>
                     <h2>Write a Customer Review</h2>
-                    {errorProductReview && <Message variant='danger'>{errorProductReview}</Message>}
+                    {successProductReview && (
+                        <Message variant='success'>
+                        Review submitted successfully
+                        </Message>
+                    )}
+                    {loadingProductReview && <Loader />}
+                    {errorProductReview && (
+                        <Message variant='danger'>{errorProductReview}</Message>
+                    )}
                     {userInfo ? (
                         <Form onSubmit={submitHandler}>
                             <Form.Group controlId='rating'>
