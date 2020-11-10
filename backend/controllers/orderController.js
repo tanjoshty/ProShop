@@ -6,13 +6,17 @@ import Order from '../models/orderModel.js'
 //@route        GET /api/orders
 //@access       Private
 const addOrderItems = asyncHandler(async (req, res) => {
+    // Get information from the frontend (req.body)
     const {orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice} = req.body
 
+    // if there are no order items
     if(orderItems && orderItems.length === 0) {
         res.status(400)
         throw new Error('No order Items')
         return
+    //if there are items in the order
     } else {
+        // Create new order with the information from the front end
         const order = new Order({
             orderItems,
             user: req.user._id, 
@@ -24,6 +28,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
             totalPrice,
         })
 
+        // Push the order to the database
         const createdOrder = await order.save()
 
         res.status(201).json(createdOrder)
@@ -34,10 +39,13 @@ const addOrderItems = asyncHandler(async (req, res) => {
 //@route        GET /api/orders/:id
 //@access       Private
 const getOrderById = asyncHandler(async (req, res) => {
+    // find the order in the database 
     const order = await Order.findById(req.params.id).populate('user', 'name email')
 
+    // if an order is found, respond with the order
     if(order) {
         res.json(order)
+    // if no order found
     } else {
         res.status(404)
         throw new Error('Order not found')
@@ -48,8 +56,10 @@ const getOrderById = asyncHandler(async (req, res) => {
 //@route        GET /api/orders/:id/pay
 //@access       Private
 const updateOrderToPaid = asyncHandler(async (req, res) => {
+    // find order in database
     const order = await Order.findById(req.params.id)
 
+    // if there is an order
     if(order) {
         order.isPaid = true
         order.paidAt = Date.now()
@@ -60,6 +70,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
             email_address: req.body.payer.email_address
         }
 
+        // Save updated order to the database
         const updatedOrder = await order.save()
 
         res.json(updatedOrder)

@@ -6,9 +6,13 @@ import Product from '../models/productModel.js'
 //@route        GET /api/products
 //@access       Public
 const getProducts = asyncHandler(async (req, res) => {
+    // 10 products on one page
     const pageSize = 10
+
+    // Get page number from URL, if none, go to page 1
     const page = Number(req.query.pageNumber) || 1
 
+    // Get keyword from URL
     const keyword = req.query.keyword ? {
         name: {
             $regex: req.query.keyword,
