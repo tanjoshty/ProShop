@@ -1,6 +1,16 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
+const wishlistSchema = mongoose.Schema({
+    name: {type: String, required: true},
+    image: {type: String, required: true},
+    price: {type: Number, required: true},
+    product: {
+        type: mongoose.Schema.Types.ObjectId, required: true,
+        ref: 'Product'
+    }
+})
+
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -19,8 +29,8 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    },
-
+    }, 
+    wishlist: [wishlistSchema]
 }, {
     timestamps: true
 })

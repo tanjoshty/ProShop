@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Product from '../models/productModel.js'
+import User from '../models/userModel.js'
 
 
 //@description  Fetch all products
@@ -147,6 +148,8 @@ const getTopProducts = asyncHandler(async (req, res) => {
 
     res.json(products)
 })
+
+
 
 export {
     getProducts,

@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import generateToken from '../utils/generateToken.js'
 import User from '../models/userModel.js'
+import Product from '../models/productModel.js'
 
 
 //@description  Auth user & get token
@@ -70,6 +71,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            wishlist: user.wishlist
         })
     } else {
         res.status(404)
@@ -166,4 +168,74 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 })
 
-export {authUser, registerUser, getUserProfile, updateUserProfile, getUsers, deleteUser, getUserById, updateUser}
+//@description  Add product to wishlist
+//@route        POST /api/user/wishlist/:id
+//@access       Private
+const addWishlistItem = asyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id)
+
+    const user = await User.findById(req.user._id)
+
+    if(user && product) {
+        
+
+        const alreadyInWishlist = user.wishlist.find((w) => w.product.toString() === req.params.id)
+
+        if(alreadyInWishlist) {
+            res.status(400)
+            throw new Error('Product already in wishlist')
+        }
+
+        const wishlist = {
+            name: product.name,
+            image: product.image,
+            price: product.price,
+            product: req.params.id
+        }
+
+        user.wishlist.push(wishlist)
+
+        await user.save()
+
+        res.status(201).json({message: 'Product added to wishlist'})
+    } else {
+        res.status(404)
+        throw new Error('Product or User not Found')
+    }
+})
+
+//@description  Remove product to wishlist
+//@route        DELETE /api/user/wishlist/:id
+//@access       Private
+const removeWishlistItem = asyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id)
+
+    const user = await User.findById(req.user._id)
+
+    if(user && product) {
+        const alreadyInWishlist = User.find((w) => w.wishlist.toString() === req.params.id)
+
+        if(alreadyInWishlist) {
+            res.status(400)
+            throw new Error('Product already in wishlist')
+        }
+
+        const wishlist = {
+            name,
+            image,
+            price,
+            product: req.params.id
+        }
+
+        user.wishlist.push(wishlist)
+
+        await user.save()
+
+        res.status(201).json({message: 'Product added to wishlist'})
+    } else {
+        res.status(404)
+        throw new Error('Product or User not Found')
+    }
+})
+
+export {authUser, registerUser, getUserProfile, updateUserProfile, getUsers, deleteUser, getUserById, updateUser, addWishlistItem}
