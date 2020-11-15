@@ -208,34 +208,39 @@ const addWishlistItem = asyncHandler(async (req, res) => {
 //@route        DELETE /api/user/wishlist/:id
 //@access       Private
 const removeWishlistItem = asyncHandler(async (req, res) => {
+    const userId = req.user._id 
+    const wishlistId = req.body._id
+    // get product by id
     const product = await Product.findById(req.params.id)
 
+    // Get user by id
     const user = await User.findById(req.user._id)
 
     if(user && product) {
-        const alreadyInWishlist = User.find((w) => w.wishlist.toString() === req.params.id)
+        const productInWishlist = user.wishlist.find((w) => w.product.toString() === req.params.id)
 
-        if(alreadyInWishlist) {
+        if(!productInWishlist) {
             res.status(400)
-            throw new Error('Product already in wishlist')
+            throw new Error('Product does not exist in wishlist')
         }
-
-        const wishlist = {
-            name,
-            image,
-            price,
-            product: req.params.id
-        }
-
-        user.wishlist.push(wishlist)
-
+        
+        await User.findByIdAndUpdate(
+            userId, {
+                $pull: {'wishlist': { _id: wishlistId }}
+            }, function (err, model) {
+                if(err) {
+                    console.log(err)
+                    return res.send(err)
+                }
+            }
+        )
         await user.save()
 
-        res.status(201).json({message: 'Product added to wishlist'})
+        res.status(201).json({message: 'Product removed from wishlist'})
     } else {
         res.status(404)
         throw new Error('Product or User not Found')
     }
 })
 
-export {authUser, registerUser, getUserProfile, updateUserProfile, getUsers, deleteUser, getUserById, updateUser, addWishlistItem}
+export {authUser, registerUser, getUserProfile, updateUserProfile, getUsers, deleteUser, getUserById, updateUser, addWishlistItem, removeWishlistItem}
