@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import Meta from '../components/Meta'
 import { listProductDetails, createProductReview } from '../actions/productActions'
+import { addProductToWishlist } from '../actions/userActions'
 import {PRODUCT_CREATE_REVIEW_RESET} from '../constants/productConstants'
 
 
@@ -36,10 +37,14 @@ const ProductsScreen = ({history, match}) => {
           dispatch(listProductDetails(match.params.id))
           dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
         }
-      }, [dispatch, match, successProductReview])
+      }, [dispatch, match, successProductReview, product._id])
     
       const addToCartHandler = () => {
         history.push(`/cart/${match.params.id}?qty=${qty}`)
+      }
+
+      const addToWishlistHandler = () => {
+        dispatch(addProductToWishlist(product._id))
       }
     
       const submitHandler = (e) => {
@@ -125,6 +130,18 @@ const ProductsScreen = ({history, match}) => {
                     <ListGroup.Item>
                         <Button onClick={addToCartHandler} className='btn-block' type='button' disabled={product.countInStock === 0}>Add to Cart</Button>
                     </ListGroup.Item>
+                    {userInfo ? (
+                        <ListGroup.Item>
+                            <Button onClick={addToWishlistHandler} className='btn-block' type='button'>Add to Wishlist</Button>
+                        </ListGroup.Item>
+                    ) : (
+                        <ListGroup.Item>
+                            <Link to='/login'>
+                                <Button className='btn-block' type='button'>Add to Wishlist</Button>
+                            </Link>
+                        </ListGroup.Item>
+                    )}
+                    
                 </ListGroup>
             </Card>
         </Col>

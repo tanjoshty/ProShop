@@ -1,4 +1,4 @@
-import { USER_DETAILS_FAIL, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_RESET, USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_UPDATE_PROFILE_FAIL, USER_UPDATE_PROFILE_REQUEST, USER_UPDATE_PROFILE_RESET, USER_UPDATE_PROFILE_SUCCESS, USER_LIST_FAIL, USER_LIST_REQUEST, USER_LIST_RESET, USER_LIST_SUCCESS, USER_DELETE_REQUEST, USER_DELETE_SUCCESS, USER_DELETE_FAIL, USER_UPDATE_RESET, USER_UPDATE_FAIL, USER_UPDATE_SUCCESS, USER_UPDATE_REQUEST } from "../constants/userConstants"
+import { USER_DETAILS_FAIL, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_RESET, USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGOUT, USER_REGISTER_FAIL, USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_UPDATE_PROFILE_FAIL, USER_UPDATE_PROFILE_REQUEST, USER_UPDATE_PROFILE_RESET, USER_UPDATE_PROFILE_SUCCESS, USER_LIST_FAIL, USER_LIST_REQUEST, USER_LIST_RESET, USER_LIST_SUCCESS, USER_DELETE_REQUEST, USER_DELETE_SUCCESS, USER_DELETE_FAIL, USER_UPDATE_RESET, USER_UPDATE_FAIL, USER_UPDATE_SUCCESS, USER_UPDATE_REQUEST, USER_ADD_WISHLIST_FAIL, USER_ADD_WISHLIST_REQUEST, USER_ADD_WISHLIST_RESET, USER_ADD_WISHLIST_SUCCESS, USER_REMOVE_WISHLIST_FAIL, USER_REMOVE_WISHLIST_REQUEST, USER_REMOVE_WISHLIST_RESET, USER_REMOVE_WISHLIST_SUCCESS } from "../constants/userConstants"
 
 export const userLoginReducer = (state = {}, action) => {
     switch(action.type) {
@@ -104,6 +104,38 @@ export const userUpdateReducer = (state = {user: {}}, action) => {
             return {
                 user: {}
             }
+        default:
+            return state
+
+    }
+}
+
+export const userAddWishlistReducer = (state = {}, action) => {
+    switch(action.type) {
+        case USER_ADD_WISHLIST_REQUEST:
+            return { loading: true }
+        case USER_ADD_WISHLIST_SUCCESS:
+            return { loading: false, success: true }
+        case USER_ADD_WISHLIST_FAIL:
+            return { loading: false, error: action.payload }
+        case USER_ADD_WISHLIST_RESET:
+            return {}
+        default:
+            return state
+
+    }
+}
+
+export const userRemoveWishlistReducer = (state = {}, action) => {
+    switch(action.type) {
+        case USER_REMOVE_WISHLIST_REQUEST:
+            return { loading: true }
+        case USER_REMOVE_WISHLIST_SUCCESS:
+            return { loading: false, success: true }
+        case USER_REMOVE_WISHLIST_FAIL:
+            return { loading: false, error: action.payload }
+        case USER_REMOVE_WISHLIST_RESET:
+            return {}
         default:
             return state
 

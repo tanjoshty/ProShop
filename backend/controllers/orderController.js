@@ -3,7 +3,7 @@ import Order from '../models/orderModel.js'
 
 
 //@description  Create new order
-//@route        GET /api/orders
+//@route        POST /api/orders
 //@access       Private
 const addOrderItems = asyncHandler(async (req, res) => {
     // Get information from the frontend (req.body)

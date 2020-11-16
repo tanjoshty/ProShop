@@ -169,15 +169,15 @@ const updateUser = asyncHandler(async (req, res) => {
 })
 
 //@description  Add product to wishlist
-//@route        POST /api/user/wishlist/:id
+//@route        POST /api/users/wishlist/:id
 //@access       Private
 const addWishlistItem = asyncHandler(async (req, res) => {
+    
     const product = await Product.findById(req.params.id)
-
+    
     const user = await User.findById(req.user._id)
 
     if(user && product) {
-        
 
         const alreadyInWishlist = user.wishlist.find((w) => w.product.toString() === req.params.id)
 
@@ -205,7 +205,7 @@ const addWishlistItem = asyncHandler(async (req, res) => {
 })
 
 //@description  Remove product to wishlist
-//@route        DELETE /api/user/wishlist/:id
+//@route        DELETE /api/users/wishlist/:id
 //@access       Private
 const removeWishlistItem = asyncHandler(async (req, res) => {
     const userId = req.user._id 
